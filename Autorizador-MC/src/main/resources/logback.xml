@@ -1,0 +1,50 @@
+<configuration>
+
+	<property name="LOG_HOME" value="logs" />
+
+	<appender name="FILE-AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/Autorizador.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss}%n%msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_HOME}/antigos/Autorizador-%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<maxFileSize>5MB</maxFileSize>
+		</rollingPolicy>
+
+	</appender>
+
+	<appender name="FILE-TRACE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/Trace.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+			</Pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_HOME}/antigos/Trace-%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<maxFileSize>100MB</maxFileSize>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="TRACE-LOG" level="TRACE" additivity="FALSE">
+		<appender-ref ref="FILE-TRACE" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="FILE-AUDIT" />		
+	</root>
+
+
+</configuration>

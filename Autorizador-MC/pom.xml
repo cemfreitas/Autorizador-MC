@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cemfreitas.autorizador_mc</groupId>
+	<artifactId>Autorizador-MC-Refactored</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Autorizador MC Refactored</name>
+	<dependencies>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>6.1.5.jre8-preview</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jpos</groupId>
+			<artifactId>jpos</artifactId>
+			<version>2.0.10</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>sshd-core</artifactId>
+					<groupId>org.apache.sshd</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-nop</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>			
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>oracle</id>
+			<name>Oracle repo</name>
+			<url>http://download.oracle.com/maven</url>
+		</repository>
+	</repositories>
+</project>
