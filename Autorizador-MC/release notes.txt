@@ -1,0 +1,2 @@
+2.0 - First refactored  version
+2.01 - Add disabled status to HSM and Ecoscard. Change transaction table field NSU to Campo 63.
