@@ -73,7 +73,7 @@ public class TransactionTable extends JTable {
 		getColumnModel().getColumn(2).setPreferredWidth(50);// Codigo
 		getColumnModel().getColumn(3).setPreferredWidth(50);// Processo
 		getColumnModel().getColumn(4).setPreferredWidth(50);// Valor
-		getColumnModel().getColumn(5).setPreferredWidth(50);// NSU
+		getColumnModel().getColumn(5).setPreferredWidth(55);// De63
 		getColumnModel().getColumn(6).setPreferredWidth(110);// Estabelecimento
 		getColumnModel().getColumn(7).setPreferredWidth(120);// Num. do cartao
 		for (int i = 0; i < 8; i++) { // Then centralize its text

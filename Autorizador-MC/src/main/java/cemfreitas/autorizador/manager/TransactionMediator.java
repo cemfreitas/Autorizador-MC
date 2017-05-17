@@ -37,7 +37,7 @@ import cemfreitas.autorizadorMVC.TransactionData;
  *         
  */
 public class TransactionMediator extends Observable implements Mediator, Manager, Callable<Object> {
-	private static final long timeOut = AutorizadorParams.getValueAsInt("TimeoutTransacao");//Get transaction time out value.
+	private static final long timeOutCunfigured = AutorizadorParams.getValueAsInt("TimeoutTransacao");//Get transaction time out value.
 	private Logger traceLog = Logging.getTrace();
 
 	//Used by Transaction implementations.
@@ -91,12 +91,22 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 		ExecutorService executor = Executors.newCachedThreadPool();
 
 		Future<Object> future = executor.submit(this);// submit reference with call method.
+		
+		long timeOutReal;
+		
+		//Check whether timeout < min allowed.
+		if (timeOutCunfigured < AutorizadorConstants.TIMEOUT_MIN_ALLOWED_TRANSAC) {
+			timeOutReal = AutorizadorConstants.TIMEOUT_DEFAULT_TRANSAC;
+		} else {
+			timeOutReal = timeOutCunfigured;
+		}
+		
 
 		try {
-			future.get(timeOut, TimeUnit.MILLISECONDS);
+			future.get(timeOutReal, TimeUnit.MILLISECONDS);
 		} catch (TimeoutException e) {
 			isTimeOut = true; // If time out, set flag on
-			autException = new AutorizadorException("********** Time Out !!! A transacao demorou mais de " + timeOut
+			autException = new AutorizadorException("********** Time Out !!! A transacao demorou mais de " + timeOutReal
 					+ " milisegundos para executar **********");
 		} catch (InterruptedException e) {
 			isTimeOut = true;

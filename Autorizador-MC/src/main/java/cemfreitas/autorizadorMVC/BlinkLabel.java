@@ -15,6 +15,7 @@ public class BlinkLabel extends JLabel implements BlinkLabelnterface {
 	private static final long serialVersionUID = 8947525073263432995L;
 	private static final Color COLOR_CONNECTED = Color.GREEN; //Color used in the "connected" text
 	private static final Color COLOR_DESCONNECTED = Color.RED; //Color used in the "disconnected" text
+	private static final Color COLOR_DISABLED = Color.BLUE; //Color used in the "disabled" text
 	private static final int BLINKING_RATE = 800;// Blink rate constant
 
 	private boolean blinkingOn = true;
@@ -65,6 +66,13 @@ public class BlinkLabel extends JLabel implements BlinkLabelnterface {
 		setText(text);
 		setForeground(COLOR_CONNECTED);
 		timer.stop();
+	}
+
+	@Override
+	public void setDisbledText(String text) {
+		setText(text);
+		setForeground(COLOR_DISABLED);
+		timer.stop();		
 	}
 
 }

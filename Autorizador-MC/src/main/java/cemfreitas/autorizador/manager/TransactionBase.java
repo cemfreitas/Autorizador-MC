@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import cemfreitas.autorizador.AutorizadorConstants;
 import cemfreitas.autorizador.Client;
 import cemfreitas.autorizador.utils.AppFunctions;
 
@@ -34,7 +35,13 @@ public abstract class TransactionBase implements Transaction, Callable<Long> {
 		this.clientIP = clientIP;
 		this.clientPort = clientPort;
 		this.clientName = clientName;
-		this.timeOut = timeOut;
+		//Check whether timeout < min allowed.
+		if (timeOut >= AutorizadorConstants.TIMEOUT_MIN_ALLOWED_CLIENT) {
+			this.timeOut = timeOut;
+		} else {
+			this.timeOut = AutorizadorConstants.TIMEOUT_DEFAULT_CLIENT;
+		}
+
 	}
 
 	public abstract void pack() throws AutorizadorException; // To be
@@ -53,7 +60,7 @@ public abstract class TransactionBase implements Transaction, Callable<Long> {
 
 		try {
 			timeRunning = (long) future.get(timeOut, TimeUnit.MILLISECONDS);
-			
+
 		} catch (TimeoutException e) {// If timed out ...
 			throw new AutorizadorException(
 					"Time Out !!! A execucao do(a) " + clientName + " demorou mais de " + timeOut + " milisegundos");
@@ -88,7 +95,7 @@ public abstract class TransactionBase implements Transaction, Callable<Long> {
 		client.receiveTransaction();
 		transactionFromClient = client.getResponseTransaction();
 		client.closeConnection();
-	}	
+	}
 
 	// For trace purposes
 	@Override

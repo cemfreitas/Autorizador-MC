@@ -27,7 +27,7 @@ import cemfreitas.autorizadorMVC.Model;
  *     
  */
 public class AutorizadorMasterCard {
-	private static final String version = "2.0";
+	private static final String version = "2.01";
 	private static Model autorizadorModel;
 	private static Controller autorizadorController;
 	private static TransactionManager transactionManager;

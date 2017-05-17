@@ -118,17 +118,18 @@ public class TransactionManager {
 					autorizadorLog.log();
 					break;
 				}
-				//For each notifications, checks the ecoscard and HSM connections
-				// and update main screen.
-				if (mediator.isEcoDisconected()) {
-					TransactionMonitor.updateEcoscardConnectionStatusView(false);
-				} else {
-					TransactionMonitor.updateEcoscardConnectionStatusView(true);
-				}
-				if (mediator.isHsmDisconected()) {
-					TransactionMonitor.updateHsmConnectionStatusView(false);
-				} else {
-					TransactionMonitor.updateHsmConnectionStatusView(true);
+				//For each notifications other than MC_UNPACK_PHASE, checks the ecoscard and HSM connections and update main screen.
+				if (currentPhase != AutorizadorConstants.TRANSAC_MC_UNPACK_PHASE) {
+					if (mediator.isEcoDisconected()) {
+						TransactionMonitor.updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+					} else {
+						TransactionMonitor.updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+					}
+					if (mediator.isHsmDisconected()) {
+						TransactionMonitor.updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+					} else {
+						TransactionMonitor.updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+					}
 				}
 			}
 		}

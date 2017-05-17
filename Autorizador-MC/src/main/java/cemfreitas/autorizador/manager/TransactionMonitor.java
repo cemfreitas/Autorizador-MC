@@ -21,12 +21,14 @@ public class TransactionMonitor {
 	private static SimpleDateFormat sdf;
 	private static Controller viewController;
 	private static TransactionStatistic transactionStatistic;
+	public static boolean isHsmEnabled, isEcoscardEnabled;
 
 	public static void init(Controller controller) {
 		viewController = controller;
 		sdf = new SimpleDateFormat("dd/MM/yyyy");
 		today = sdf.format(new Date());
-		checkClientConnectioStatus();
+		checkHsmStatus();
+		checkEcoscardStatus();
 		transactionStatistic = new TransactionStatistic();
 	}
 
@@ -112,37 +114,52 @@ public class TransactionMonitor {
 
 	}
 
-	synchronized static public void updateHsmConnectionStatusView(boolean status) {
+	synchronized static public void updateHsmConnectionStatusView(int status) {
 		viewController.setConnectStatusHSM(status);
 	}
 
-	synchronized static public void updateEcoscardConnectionStatusView(boolean status) {
+	synchronized static public void updateEcoscardConnectionStatusView(int status) {
 		viewController.setConnectStatusEcoscard(status);
 	}
 
-	private static void checkClientConnectioStatus() {
+	private static void checkHsmStatus() {
 		String hsmIP = AutorizadorParams.getValue("IPServidorHSM");
+		String hsmSP = AutorizadorParams.getValue("SP_HSM");
 		int hsmPort = AutorizadorParams.getValueAsInt("PortaServidorHSM");
 
+		if (hsmIP.equals("") || hsmSP.equals("") || hsmPort == 0) {
+			isHsmEnabled = false;
+			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISABLED);
+			return;
+		}
+		isHsmEnabled = true;
 		Client hsm = new Client(hsmIP, hsmPort, "HSM");
 		try {
 			hsm.clientConnect();
-			updateHsmConnectionStatusView(true);
+			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
 			hsm.closeConnection();			
-		} catch (IOException e) {			
-			updateHsmConnectionStatusView(false);
+		} catch (IOException e) {
+			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
 		}
+	}
 
+	private static void checkEcoscardStatus() {
 		String ecoscardIP = AutorizadorParams.getValue("EcoscardIP");
-		int ecoscardPort = AutorizadorParams.getValueAsInt("EcoscardPorta");
-
+		int ecoscardPort = AutorizadorParams.getValueAsInt("EcoscardPorta");		
+		
+		if (ecoscardIP.equals("") || ecoscardPort == 0) {			
+			isEcoscardEnabled = false;
+			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISABLED);
+			return;
+		}
+		isEcoscardEnabled = true;
 		Client ecoscard = new Client(ecoscardIP, ecoscardPort, "Ecoscard");
 		try {
 			ecoscard.clientConnect();
-			updateEcoscardConnectionStatusView(true);
-			ecoscard.closeConnection();
+			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+			ecoscard.closeConnection();			
 		} catch (IOException e) {
-			updateEcoscardConnectionStatusView(false);
+			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
 		}
 	}
 

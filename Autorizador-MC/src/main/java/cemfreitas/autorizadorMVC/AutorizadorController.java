@@ -1,5 +1,6 @@
 package cemfreitas.autorizadorMVC;
 
+import cemfreitas.autorizador.AutorizadorConstants;
 import cemfreitas.autorizador.AutorizadorMasterCard;
 import cemfreitas.autorizador.manager.AutorizadorException;
 import cemfreitas.autorizador.utils.AppFunctions;
@@ -13,7 +14,7 @@ import cemfreitas.autorizador.utils.AppFunctions;
 public class AutorizadorController implements Controller {
 	private Model autorizadorModel;
 	private AutorizadorView autorizadorView;
-	private boolean enableTransaction;	
+	private boolean enableTransaction;
 	private final static int numMaxTransactionTable = 500; //Num. max of rows on transaction table 
 
 	public AutorizadorController(Model model) {
@@ -41,9 +42,9 @@ public class AutorizadorController implements Controller {
 
 	// Update the HSM connection status
 	@Override
-	public void setConnectStatusHSM(boolean status) {
-		if (autorizadorModel.getStatusConnHSM() != status) {// Check whether
-															// status changed
+	public void setConnectStatusHSM(int status) {		
+		if (autorizadorModel.getStatusConnHSM() != status
+				&& autorizadorModel.getStatusConnHSM() != AutorizadorConstants.CLIENT_DISABLED) {// Check whether status has changed or Hsm not disable
 			autorizadorModel.setStatusConnHSM(status);
 			autorizadorView.updateHSMConnection();
 		}
@@ -51,11 +52,9 @@ public class AutorizadorController implements Controller {
 
 	// Update the Ecoscard connection status
 	@Override
-	public void setConnectStatusEcoscard(boolean status) {
-		if (autorizadorModel.getStatusConnEcoscard() != status) {// Check
-																	// whether
-																	// status
-																	// changed
+	public void setConnectStatusEcoscard(int status) {
+		if (autorizadorModel.getStatusConnEcoscard() != status
+				&& autorizadorModel.getStatusConnEcoscard() != AutorizadorConstants.CLIENT_DISABLED) {// Check whether status has changed or Ecoscard not disable
 			autorizadorModel.setStatusConnEcoscard(status);
 			autorizadorView.updateEcoscardConnection();
 		}

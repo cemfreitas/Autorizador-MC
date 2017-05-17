@@ -62,6 +62,10 @@ public class ConnectionView extends JPanel {
 		lbHSMStatusConnect.setDesconectedText("Desconectado");
 	}
 	
+	void setHSMDisabled() {
+		lbHSMStatusConnect.setDisbledText("Desabilitado");
+	}
+	
 	void setEcoscardConnectionOn() {
 		lbEcoscardStatusConnect.setConnectedText("Conectado");
 	}
@@ -69,5 +73,8 @@ public class ConnectionView extends JPanel {
 	void setEcoscardConnectionOff() {
 		lbEcoscardStatusConnect.setDesconectedText("Desconectado");
 	}
-
+	
+	void setEcoscardDisabled() {
+		lbEcoscardStatusConnect.setDisbledText("Desabilitado");
+	}
 }

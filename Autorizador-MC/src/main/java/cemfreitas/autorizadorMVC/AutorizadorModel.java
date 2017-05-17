@@ -11,7 +11,8 @@ import java.util.Map;
  * It implements an interface which dictates its behavior. *        
  */
 public class AutorizadorModel implements Model {
-	private boolean statusConnHSM, statusConnEcoscard, onOffUpdate;
+	private boolean  onOffUpdate;
+	private int statusConnHSM, statusConnEcoscard;
 	private String currentDate;
 	private int numTotalTrans, numTransCompleted, numTransError, numTransReversal, numTransInProcess;
 	private ArrayList<TransactionData> transactionList;
@@ -27,13 +28,13 @@ public class AutorizadorModel implements Model {
 
 	//Set the HSM connection status. Also notify the view layer
 	@Override
-	public void setStatusConnHSM(boolean status) {
+	public void setStatusConnHSM(int status) {
 		statusConnHSM = status;
 	}
 
 	//Set the Ecoscard connection status. Also notify the view layer
 	@Override
-	public void setStatusConnEcoscard(boolean status) {
+	public void setStatusConnEcoscard(int status) {
 		statusConnEcoscard = status;
 	}
 
@@ -128,12 +129,12 @@ public class AutorizadorModel implements Model {
 	}
 
 	@Override
-	public boolean getStatusConnHSM() {
+	public int getStatusConnHSM() {
 		return statusConnHSM;
 	}
 
 	@Override
-	public boolean getStatusConnEcoscard() {
+	public int getStatusConnEcoscard() {
 		return statusConnEcoscard;
 	}
 

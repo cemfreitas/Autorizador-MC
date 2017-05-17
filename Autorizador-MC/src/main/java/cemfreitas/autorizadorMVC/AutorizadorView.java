@@ -63,20 +63,34 @@ public class AutorizadorView {
 
 	// Changes the HSM connection status whenever the model changes
 	void updateHSMConnection() {
-		if (model.getStatusConnHSM() == AutorizadorConstants.CONNECTED) {
+		
+		switch (model.getStatusConnHSM()) {
+		case AutorizadorConstants.CLIENT_CONNECTED:
 			connectionView.setHSMConnectionOn();
-		} else {
+			break;
+		case AutorizadorConstants.CLIENT_DISCONNECTED:
 			connectionView.setHSMConnectionOff();
+			break;
+		case AutorizadorConstants.CLIENT_DISABLED:
+			connectionView.setHSMDisabled();
+			break;
 		}
 	}
 
 	// Changes the Ecoscard connection status whenever the model changes
 	void updateEcoscardConnection() {
-		if (model.getStatusConnEcoscard() == AutorizadorConstants.CONNECTED) {
+		
+		switch (model.getStatusConnEcoscard()) {
+		case AutorizadorConstants.CLIENT_CONNECTED:
 			connectionView.setEcoscardConnectionOn();
-		} else {
+			break;
+		case AutorizadorConstants.CLIENT_DISCONNECTED:
 			connectionView.setEcoscardConnectionOff();
-		}
+			break;
+		case AutorizadorConstants.CLIENT_DISABLED:
+			connectionView.setEcoscardDisabled();
+			break;
+		}		
 	}
 
 	// Insert a transaction in the model whenever the model changes
@@ -129,18 +143,20 @@ public class AutorizadorView {
 
 	//Check whether exist transactions still been processed and warns before close.   
 	boolean showShutdownWarningMessage() {
-		int dialogResult = JOptionPane.showConfirmDialog(null, "Existe(m) ainda trasacao(oes) sendo processada(s).\nTem certeza que deseja sair?",
-				"Cuidado !", JOptionPane.YES_NO_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null,
+				"Existe(m) ainda trasacao(oes) sendo processada(s).\nTem certeza que deseja sair?", "Cuidado !",
+				JOptionPane.YES_NO_OPTION);
 		if (dialogResult == JOptionPane.YES_OPTION) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	boolean showShutdownNormalMessage() {
-		int dialogResult = JOptionPane.showConfirmDialog(null, "O Autorizador MasterCard sera finalizado.\nTem certeza que deseja sair?",
-				"Aviso !", JOptionPane.YES_NO_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null,
+				"O Autorizador MasterCard sera finalizado.\nTem certeza que deseja sair?", "Aviso !",
+				JOptionPane.YES_NO_OPTION);
 		if (dialogResult == JOptionPane.YES_OPTION) {
 			return true;
 		} else {

@@ -5,8 +5,8 @@ import java.util.List;
 public interface Model {
 	
 	void initialize();	
-	void setStatusConnHSM(boolean status);
-	void setStatusConnEcoscard(boolean status);		
+	void setStatusConnHSM(int status);
+	void setStatusConnEcoscard(int status);		
 	void setOnOffUpdateTrans(boolean update);	
 	void setCurrentDate(String currentDate);
 	void setNumTotalTrans(int numTotalTrans);
@@ -16,8 +16,8 @@ public interface Model {
 	void setNumTransInProcess(int numTransInProcess);	
 	void insertTransaction(long threadId, TransactionData transaction);
 	int updateTransactionStatus(long threadId, int status);
-	boolean getStatusConnHSM();
-	boolean getStatusConnEcoscard();
+	int getStatusConnHSM();
+	int getStatusConnEcoscard();
 	boolean getOnOffUpdateTrans();
 	String getCurrentDate();
 	int getNumTotalTrans();

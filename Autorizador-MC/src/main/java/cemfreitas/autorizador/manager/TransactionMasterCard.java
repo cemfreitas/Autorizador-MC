@@ -186,12 +186,12 @@ public class TransactionMasterCard extends TransactionBase {
 																							// unpack.
 
 			isoTransaction.unpack(transaction);// Unpack it.
-			
+
 			try {
 				transactionData.setCodigo(isoTransaction.getMTI()); // Get cod transaction
 			} catch (ISOException e) {
-				
-			} 
+
+			}
 
 			if (isoTransaction.hasField(12) && isoTransaction.hasField(13)) {// Get
 																				// date
@@ -207,8 +207,8 @@ public class TransactionMasterCard extends TransactionBase {
 			if (isoTransaction.hasField(42)) {// Get Estbelecimento
 				transactionData.setEstabelecimento((String) isoTransaction.getValue(42));
 			}
-			if (isoTransaction.hasField(11)) {// Get NSU
-				transactionData.setNSU((String) isoTransaction.getValue(11));
+			if (isoTransaction.hasField(63)) {// Get De63
+				transactionData.setNSU((String) isoTransaction.getValue(63));
 			}
 			if (isoTransaction.hasField(35)) {// Get number of the card
 				transactionData.setNumCartao((String) isoTransaction.getValue(35));
@@ -231,10 +231,9 @@ public class TransactionMasterCard extends TransactionBase {
 			if (isoTransaction.hasField(4)) { // Get the value of transaction
 				transactionData.setValor(AppFunctions.parseAmount((String) isoTransaction.getValue(4)));
 			}
-			
+
 			mediator.setTransactionData(transactionData);
 
-			
 			mediator.setIsoTransactionFromMC(isoTransaction);// Send ISO
 																// transaction
 																// to mediator.
@@ -267,18 +266,18 @@ public class TransactionMasterCard extends TransactionBase {
 	private void checkHSMTransaction(ISOMsg isoTransaction) throws ISOException {
 		String de52, mti;
 
-		if (!isoTransaction.hasField(52)) {
+		if (!isoTransaction.hasField(52) || !TransactionMonitor.isHsmEnabled) {
 			mediator.setHSMTransaction(false);
 			return;
 		}
 
 		mti = isoTransaction.getMTI();
-		de52 = isoTransaction.getString(52);		
-		
+		de52 = isoTransaction.getString(52);
+
 		if ((!mti.equals(AutorizadorConstants.TRANSAC_AUTHORIZATION_TYPE)
 				|| !mti.equals(AutorizadorConstants.TRANSAC_PURCHASE_TYPE)) && (de52.equals(""))) {// HSM rule			
 			mediator.setHSMTransaction(false);
-		} else {			
+		} else {
 			mediator.setHSMTransaction(true);
 		}
 
@@ -290,7 +289,7 @@ public class TransactionMasterCard extends TransactionBase {
 	private void checkEcoscardTransaction(ISOMsg isoTransaction) throws ISOException {
 		String de22, mti;
 
-		if (!isoTransaction.hasField(22)) {
+		if (!isoTransaction.hasField(22) || !TransactionMonitor.isEcoscardEnabled) {
 			mediator.setChipCardTransaction(false);
 			return;
 		}

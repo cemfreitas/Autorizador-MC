@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.swing.SwingUtilities;
 
+import cemfreitas.autorizador.AutorizadorConstants;
 import cemfreitas.autorizadorMVC.AutorizadorController;
 import cemfreitas.autorizadorMVC.AutorizadorModel;
 import cemfreitas.autorizadorMVC.Model;
@@ -28,8 +29,8 @@ public class TesteInterface {
 	public static void createAndShowGUI() throws Exception {
 		autorizadorModel = new AutorizadorModel();
 		autorizadorController = new AutorizadorController(autorizadorModel);
-		autorizadorController.setConnectStatusHSM(false);
-		autorizadorController.setConnectStatusEcoscard(true);
+		autorizadorController.setConnectStatusHSM(AutorizadorConstants.CLIENT_CONNECTED);
+		autorizadorController.setConnectStatusEcoscard(AutorizadorConstants.CLIENT_CONNECTED);
 		autorizadorController.setApplicationVersion("vs 2.0");		
 		
 		TransactionData transactionData;		

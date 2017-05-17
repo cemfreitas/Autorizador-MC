@@ -48,11 +48,7 @@ public class Client {
 	}
 
 	//Try to connect to host.
-	public void clientConnect() throws IOException  {
-		if (clienteIP.equals("") || clientPort == 0){
-			throw new IOException("Erro. " + clientName + " nao esta configurado.");
-		}
-		
+	public void clientConnect() throws IOException  {		
 		try {
 			clienteSocket = new Socket(clienteIP, clientPort);
 			inputStream = clienteSocket.getInputStream();
