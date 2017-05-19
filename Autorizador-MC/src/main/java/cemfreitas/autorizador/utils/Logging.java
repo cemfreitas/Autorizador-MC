@@ -34,7 +34,7 @@ public class Logging {
 		return trace;
 	}
 
-	public static void turnTraceOff() {
+	private static void turnTraceOff() {
 		traceLogger.setLevel(Level.OFF);
 	}
 

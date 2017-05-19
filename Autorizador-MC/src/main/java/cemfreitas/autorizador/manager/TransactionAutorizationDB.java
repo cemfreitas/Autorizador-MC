@@ -133,7 +133,8 @@ public class TransactionAutorizationDB extends TransactionBaseDB {
 	// For trace purposes.
 	private String listDbExecutionResult() {
 		StringBuffer result = new StringBuffer();
-		int deNumber = 0;
+		int deNumber = 0;		
+		
 		for (String de : getDatabaseReturn()) {
 			result.append("DE");
 			result.append(deNumber++);

@@ -3,6 +3,7 @@ package cemfreitas.autorizador.manager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -46,6 +47,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	//Used by streams connections from TM 
 	private InputStream inputStream;
 	private OutputStream outputStream;
+	private Socket connection;
 
 	//Used by transactions bytes representation 
 	private byte[] transactionFromMC, transactionFromEcoscard, transactionToMC, transactionToEcoscard,
@@ -73,10 +75,12 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	private long ecoExecutionTime, hsmDbExecutionTime, hsmExecutionTime, autDbExecutionTime, autExecutionTime;
 
 	// Constructor.
-	//Receives streams references from TM
-	public TransactionMediator(InputStream inputStream, OutputStream outputStream) {
-		this.inputStream = inputStream;
-		this.outputStream = outputStream;
+	//Receives CM message and connection from TM
+	public TransactionMediator(byte[] transactionFromMC, Socket connection) throws IOException {
+		this.transactionFromMC = transactionFromMC;
+		this.connection = connection;
+		this.inputStream = connection.getInputStream();
+		this.outputStream = connection.getOutputStream();
 	}
 
 	//Add the TM as Observable
@@ -91,18 +95,18 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 		ExecutorService executor = Executors.newCachedThreadPool();
 
 		Future<Object> future = executor.submit(this);// submit reference with call method.
-		
+
 		long timeOutReal;
-		
+
 		//Check whether timeout < min allowed.
 		if (timeOutCunfigured < AutorizadorConstants.TIMEOUT_MIN_ALLOWED_TRANSAC) {
 			timeOutReal = AutorizadorConstants.TIMEOUT_DEFAULT_TRANSAC;
 		} else {
 			timeOutReal = timeOutCunfigured;
 		}
-		
 
 		try {
+
 			future.get(timeOutReal, TimeUnit.MILLISECONDS);
 		} catch (TimeoutException e) {
 			isTimeOut = true; // If time out, set flag on
@@ -134,7 +138,6 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 
 			//Starts to process a MC transaction.
 			transactionMasterCard = transactionFactory.createMasterCardTransaction(this);
-			transactionMasterCard.receive();
 			transactionMasterCard.unpack();
 			changeTransactionPhase(AutorizadorConstants.TRANSAC_MC_UNPACK_PHASE);//Notify TM with a new unpacked transaction.
 			/*
@@ -149,6 +152,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 				try {
 					transactionEcoscard = transactionFactory.createEcoscardTransaction(this);
 					transactionEcoscard.pack();
+
 					ecoExecutionTime = transactionEcoscard.doTransaction();// Send
 																			// and
 																			// receive
@@ -172,7 +176,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 					isAborted = true;// Set flag. Transaction aborted.
 				} // End of inner try/catch block
 			}
-			
+
 			/*
 			 * Flag settled by TransactionMasterCard to know whether or not
 			 * should be send to HSM.
@@ -196,8 +200,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 																		// and
 																		// receive
 																		// to
-																		// HSM
-
+																		// HSM					
 				} catch (AutorizadorException e) {
 					hsmException = e;
 					if (traceLog.isTraceEnabled()) {
@@ -215,14 +218,16 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 			}
 			// Preparing to execute SP Authorization
 			transAutorizationDB = transactionFactory.createAutDbTransaction(this);
+
 			autDbExecutionTime = transAutorizationDB.doTransaction(); // Execute
 																		// SP
 																		// Authorization
 
-			// Preparing to send the transaction response to Master Card.
-			transactionMasterCard.pack();// Pack response
+			// Preparing to send the transaction response to Master Card.			
+			transactionMasterCard.pack();// Pack response			
+
 			transactionMasterCard.send();// Send it
-			
+
 			endTransacExec = System.currentTimeMillis();//Mark the end of execution and ...
 			autExecutionTime = endTransacExec - beginTransacExec;//Calculates the execution time.
 
@@ -230,38 +235,49 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 			autException = e;
 
 			if (traceLog.isTraceEnabled()) {
-				traceLog.trace("Origem do erro:", e);// If trace enabled, log
-														// the stack error on
-														// trace file.
+				if (!e.getMessage().equals("")) {
+					traceLog.trace("Origem do erro:", e);// If trace enabled, log
+															// the stack error on
+															// trace file.
+				}
 			}
 			isAborted = true;// Set flag. Transaction aborted.
 
 		} finally {
-			try {// Release streams
+			try {// Release streams and disconnect.
 				if (inputStream != null)
 					inputStream.close();
 				if (outputStream != null)
 					outputStream.close();
+				if (connection != null)
+					connection.close();
 			} catch (IOException e) {
 				isAborted = true;
 				autException = new AutorizadorException("Erro ao fechar conexao com a Mastercard.");
 			}
-			if (traceLog.isTraceEnabled()) {// Turn the trace log off if
-											// enabled, so that be executed only
-											// once.
-				Logging.turnTraceOff();
+
+			/*
+			 * if (traceLog.isTraceEnabled()) {// Turn the trace log off if
+			 * enabled, so that be executed only once. Logging.turnTraceOff(); }
+			 */
+
+			//Message could not be unpacked. Aborting ...
+			if (isoTransactionFromMC == null) {
+				return null;
 			}
 
 			if (isAborted || isTimeOut) {// If occurred some error
 				changeTransactionPhase(AutorizadorConstants.TRANSAC_AUT_ERROR_PHASE);//Notify TM with transaction finished with error.
 			} else {
-				changeTransactionPhase(AutorizadorConstants.TRANSAC_COMPLETED_PHASE);//Notify TM with transaction finished successfully. 
+				if (!transactionData.getCodigo().equals(AutorizadorConstants.TRANSAC_REVERSAL_TYPE)) {//Reversal message should not be counted.
+					changeTransactionPhase(AutorizadorConstants.TRANSAC_COMPLETED_PHASE);//Notify TM with transaction finished successfully.
+				}
 			}
 
 		} // End of outer try/catch block
 		return null;
 	}
-	
+
 	//Changes phase and notify TM
 	private void changeTransactionPhase(int phase) {
 		transactionPhase = phase;
@@ -270,9 +286,8 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 
 	}
 
-	
 	//Gets and Sets methods.
-	
+
 	@Override
 	public byte[] getTransactionFromMC() {
 		return transactionFromMC;
@@ -426,7 +441,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	@Override
 	public int getTransactionPhase() {
 		return transactionPhase;
-	}	
+	}
 
 	@Override
 	public TransactionData getTransactionData() {

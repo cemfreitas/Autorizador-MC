@@ -1,10 +1,8 @@
 package cemfreitas.autorizador.manager;
 
 import java.awt.Frame;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observable;
@@ -13,6 +11,7 @@ import java.util.Observer;
 import javax.swing.JOptionPane;
 
 import cemfreitas.autorizador.AutorizadorConstants;
+import cemfreitas.autorizador.utils.AppFunctions;
 import cemfreitas.autorizador.utils.AutorizadorLog;
 import cemfreitas.autorizador.utils.AutorizadorParams;
 
@@ -24,10 +23,9 @@ public class TransactionManager {
 	//Socked parameters.
 	private static final int NUMBER_MAX_CONNECTION = 1000;
 	private static final int LISTENING_PORT = AutorizadorParams.getValueAsInt("PortaEscuta");
+	private static final int ISO_MIN_MESSAGE_LENGTH = 14;
 
-	//Connection variables. 
-	private InputStream inputStream;
-	private OutputStream outputStream;
+	//Connection variables.	
 	private ServerSocket server;
 	private Socket connection;
 
@@ -48,14 +46,12 @@ public class TransactionManager {
 			try {
 				// Waiting for MC connections 
 				connection = server.accept();
-				// Get streams
-				inputStream = connection.getInputStream();
-				outputStream = connection.getOutputStream();
+
 			} catch (IOException e) {
-				return;
+				continue;
 			}
 			//Starts thread to process transaction.
-			Transaction transaction = new Transaction(inputStream, outputStream);
+			Transaction transaction = new Transaction(connection);
 			transaction.start();
 		}
 	}
@@ -69,20 +65,25 @@ public class TransactionManager {
 	 */
 
 	private class Transaction extends Thread implements Observer {
-		private InputStream inputStream;
-		private OutputStream outputStream;
+		Socket connection;		
 
 		//Receives connection streams from outer class.
-		Transaction(InputStream inputstream, OutputStream outputStream) {
-			this.inputStream = inputstream;
-			this.outputStream = outputStream;
+		Transaction(Socket connection) {
+			this.connection = connection;
 		}
 
 		@Override
 		public void run() {
-			Manager transaction = new TransactionMediator(inputStream, outputStream);
-			transaction.addObservable(this);
-			transaction.perform();
+			try {
+				byte[] mcMessage = receiveMessage();
+				if (mcMessage != null) {//If is a valid message. 
+					Manager transaction = new TransactionMediator(mcMessage, connection);
+					transaction.addObservable(this);//Register as an Observable  
+					transaction.perform();
+				}
+			} catch (IOException e) {
+				return;
+			}
 		}
 
 		/*
@@ -133,23 +134,29 @@ public class TransactionManager {
 				}
 			}
 		}
-	}
 
-	//Close connection with MC. 
-	//Used at shutdown process.
-	public void closeConnection() throws AutorizadorException {
-		try {
-			if (inputStream != null) {
-				inputStream.close();
+		//Receives message from MC
+		private byte[] receiveMessage() {
+			byte[] message = null;
+			byte pbyte = 0;
+			InputStream inputStream;
+			try {
+				inputStream = connection.getInputStream();
+				pbyte = (byte) inputStream.read();
+				message = new byte[inputStream.available()];
+				inputStream.read(message);
+
+				message = AppFunctions.concatenate(pbyte, message);
+
+				if (message.length < ISO_MIN_MESSAGE_LENGTH) {//Test whether is an ISO transaction.
+					message = null;
+				}
+
+			} catch (IOException e) {
+				message = null;
 			}
-			if (outputStream != null) {
-				outputStream.close();
-			}
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (IOException e) {
-			throw new AutorizadorException(e);
+
+			return message;
 		}
 	}
 }

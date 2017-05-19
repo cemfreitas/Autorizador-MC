@@ -1,7 +1,6 @@
 package cemfreitas.autorizador.manager;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -21,11 +20,10 @@ import cemfreitas.autorizadorMVC.TransactionData;
  * implementations for the MasterCard transactions.
  */
 public class TransactionMasterCard extends TransactionBase {
-	private static final String packageName = "config/ISO8583_MC.xml";
+	private static final String packageName = "config/ISO8583_MC.xml";	
 	private Logger traceLog = Logging.getTrace();
 	private GenericPackager packagerMC;
-	private Mediator mediator;
-	private byte[] transaction;
+	private Mediator mediator;	
 	private TransactionData transactionData;// Holds transaction info to show on view.
 
 	public TransactionMasterCard(Mediator mediator) throws AutorizadorException {
@@ -47,47 +45,14 @@ public class TransactionMasterCard extends TransactionBase {
 			outputStream.write(transaction);
 			if (traceLog.isTraceEnabled()) {
 				traceLog.trace(" ----- Resposta enviada ao terminal -----");
-				traceLog.trace(AppFunctions.hexdump(transaction));
-				Logging.turnTraceOff();// Turn the trace off in order to trace
-										// once.
+				traceLog.trace(AppFunctions.hexdump(transaction));				
 			}
 
 		} catch (IOException e) {
 			throw new AutorizadorException("Erro ao enviar transacao para Master Card: " + e.getMessage());
 		}
 
-	}
-
-	// Receives the MC transaction from the acquire.
-	// It overrides the superclass implementation.
-	// Whole transaction process begins here.
-	@Override
-	public void receive() throws AutorizadorException {
-		byte[] msg = null;
-		byte pbyte = 0;
-		InputStream inputStream = mediator.getInputStream();
-		try {
-			pbyte = (byte) inputStream.read();
-			msg = new byte[inputStream.available()];
-			inputStream.read(msg);
-
-			transaction = AppFunctions.concatenate(pbyte, msg);
-
-			mediator.setTransactionFromMC(transaction); // Send MC transaction
-														// received to mediator.
-
-			if (traceLog.isTraceEnabled()) {
-				traceLog.trace(" ----- Transacao vinda do terminal -----");
-				traceLog.trace(getTransactionToTrace(transaction));
-			}
-
-			if (msg.length == 0) {
-				throw new AutorizadorException("Erro ao receber transacao da MasterCard :zero byte recebido");
-			}
-		} catch (IOException e) {
-			throw new AutorizadorException("Erro ao receber transacao da MasterCard :" + e.getMessage());
-		}
-	}
+	}	
 
 	// Pack response transaction to be sent.
 	@Override
@@ -162,15 +127,18 @@ public class TransactionMasterCard extends TransactionBase {
 		try {
 			ISOMsg isoTransaction = new ISOMsg();// Create a new ISO
 													// transaction.
-			byte[] transaction;
+			byte[] transaction = mediator.getTransactionFromMC();// Get MC transaction from mediator.;
+			
+			if (traceLog.isTraceEnabled()) {
+				traceLog.trace(" ----- Transacao vinda do terminal -----");
+				traceLog.trace(getTransactionToTrace(transaction));
+			}
 
 			if (packagerMC == null) {
 				getPackager();
 			}
 			isoTransaction.setPackager(packagerMC);
-
-			transaction = mediator.getTransactionFromMC();// Get MC transaction
-															// from mediator.
+			
 
 			if (!AppFunctions.checkHeader(transaction)) {// Check whether the
 															// head size is
@@ -242,7 +210,7 @@ public class TransactionMasterCard extends TransactionBase {
 														// and set a flag.
 			checkHSMTransaction(isoTransaction);// Verify whether is a HSM
 												// transaction and set a flag.
-			if (traceLog.isTraceEnabled()) {
+			if (traceLog.isTraceEnabled()) {				
 				traceLog.trace(" ----- Transacao MC desempacotada com sucesso -----");
 			}
 

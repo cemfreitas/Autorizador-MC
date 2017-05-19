@@ -37,7 +37,7 @@ public class AutorizadorMasterCard {
 		AutorizadorParams.loadProperties();//Load configuration parameters.
 		AutorizadorDB.init();//Initialize database. 
 		if (args.length == 1) {//Check whether trace should be on
-			if (args[0].equalsIgnoreCase("TRACEON")) {
+			if (args[0].equalsIgnoreCase("TRACEON")) {				
 				Logging.init(true);
 			}
 		} else {
@@ -51,9 +51,8 @@ public class AutorizadorMasterCard {
 		transactionManager.perform();                 // and process MC messages.
 	}
 
-	//Shutdown hook. Perform some tasks before close application. 
-	public static void shutDownApplication() throws AutorizadorException {
-		transactionManager.closeConnection();
+	//Shutdown hook.  
+	public static void shutDownApplication() throws AutorizadorException {		
 		Logging.shutdown();
 	}
 
