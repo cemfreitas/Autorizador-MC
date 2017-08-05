@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 import javax.swing.SwingUtilities;
 
-import cemfreitas.autorizador.AutorizadorConstants;
-import cemfreitas.autorizadorMVC.AutorizadorController;
-import cemfreitas.autorizadorMVC.AutorizadorModel;
-import cemfreitas.autorizadorMVC.Model;
-import cemfreitas.autorizadorMVC.TransactionData;
+import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.MVC.AutorizadorController;
+import cemfreitas.autorizadorMC.MVC.AutorizadorModel;
+import cemfreitas.autorizadorMC.MVC.Model;
+import cemfreitas.autorizadorMC.MVC.TransactionData;
 
 public class TesteInterface {
 	static Model autorizadorModel;

@@ -1,9 +1,9 @@
 package cemfreitas.autorizador.tests;
 
-import cemfreitas.autorizador.AutorizadorDB;
-import cemfreitas.autorizador.manager.TransactionManager;
-import cemfreitas.autorizador.utils.AutorizadorParams;
-import cemfreitas.autorizador.utils.Logging;
+import cemfreitas.autorizadorMC.AutorizadorDB;
+import cemfreitas.autorizadorMC.manager.TransactionManager;
+import cemfreitas.autorizadorMC.utils.AutorizadorParams;
+import cemfreitas.autorizadorMC.utils.Logging;
 
 public class TesteServer {
 	
