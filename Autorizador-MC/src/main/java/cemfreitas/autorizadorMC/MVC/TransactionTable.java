@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 
 /* TransactionTable class
  *  It represents a JTable instance, but customized to show transactions and
@@ -38,20 +38,20 @@ public class TransactionTable extends JTable {
 			value = getModel().getValueAt(row, col);
 			
 			if (value != null && col == 0) { // Status on the first column (0)
-				switch ((int) value) {
-				case AutorizadorConstants.TRANSAC_NEW_STATUS:
+				switch ((TransactionStatus) value) {
+				case TRANSAC_NEW:
 					comp.setBackground(Color.CYAN);
 					comp.setForeground(Color.CYAN);
 					break;
-				case AutorizadorConstants.TRANSAC_REV_STATUS:
+				case TRANSAC_REVERTED:
 					comp.setBackground(Color.YELLOW);
 					comp.setForeground(Color.YELLOW);
 					break;
-				case AutorizadorConstants.TRANSAC_COMP_STATUS:
+				case TRANSAC_COMPLETED:
 					comp.setBackground(Color.GREEN);
 					comp.setForeground(Color.GREEN);
 					break;
-				case AutorizadorConstants.TRANSAC_NOTCOMP_STATUS:
+				case TRANSAC_NOT_COMPLETED:
 					comp.setBackground(Color.RED);
 					comp.setForeground(Color.RED);
 					break;

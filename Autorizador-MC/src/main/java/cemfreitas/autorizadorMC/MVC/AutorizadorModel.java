@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cemfreitas.autorizadorMC.AutorizadorConstants.ClientConnectionStatus;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
+
 /* AutorizadorModel class
  * It represents the model layer of the MVC model.
  * It contains all data showed on the view parts.
@@ -12,7 +15,7 @@ import java.util.Map;
  */
 public class AutorizadorModel implements Model {
 	private boolean  onOffUpdate;
-	private int statusConnHSM, statusConnEcoscard;
+	private ClientConnectionStatus statusConnHSM, statusConnEcoscard;
 	private String currentDate;
 	private int numTotalTrans, numTransCompleted, numTransError, numTransReversal, numTransInProcess;
 	private ArrayList<TransactionData> transactionList;
@@ -28,13 +31,13 @@ public class AutorizadorModel implements Model {
 
 	//Set the HSM connection status. Also notify the view layer
 	@Override
-	public void setStatusConnHSM(int status) {
+	public void setStatusConnHSM(ClientConnectionStatus status) {
 		statusConnHSM = status;
 	}
 
 	//Set the Ecoscard connection status. Also notify the view layer
 	@Override
-	public void setStatusConnEcoscard(int status) {
+	public void setStatusConnEcoscard(ClientConnectionStatus status) {
 		statusConnEcoscard = status;
 	}
 
@@ -129,12 +132,12 @@ public class AutorizadorModel implements Model {
 	}
 
 	@Override
-	public int getStatusConnHSM() {
+	public ClientConnectionStatus getStatusConnHSM() {
 		return statusConnHSM;
 	}
 
 	@Override
-	public int getStatusConnEcoscard() {
+	public ClientConnectionStatus getStatusConnEcoscard() {
 		return statusConnEcoscard;
 	}
 
@@ -145,7 +148,7 @@ public class AutorizadorModel implements Model {
 	
 	//Update the transaction status on the List based on its thread id
 	@Override
-	public int updateTransactionStatus(long threadId, int status) {
+	public int updateTransactionStatus(long threadId, TransactionStatus status) {
 		Integer index;
 		synchronized (this) {
 			index = threadIndexMap.get(threadId);

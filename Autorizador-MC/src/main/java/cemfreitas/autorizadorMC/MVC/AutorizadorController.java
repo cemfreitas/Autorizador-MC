@@ -1,6 +1,7 @@
 package cemfreitas.autorizadorMC.MVC;
 
-import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.ClientConnectionStatus;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 import cemfreitas.autorizadorMC.AutorizadorMasterCard;
 import cemfreitas.autorizadorMC.manager.AutorizadorException;
 import cemfreitas.autorizadorMC.utils.AppFunctions;
@@ -42,9 +43,9 @@ public class AutorizadorController implements Controller {
 
 	// Update the HSM connection status
 	@Override
-	public void setConnectStatusHSM(int status) {		
+	public void setConnectStatusHSM(ClientConnectionStatus status) {		
 		if (autorizadorModel.getStatusConnHSM() != status
-				&& autorizadorModel.getStatusConnHSM() != AutorizadorConstants.CLIENT_DISABLED) {// Check whether status has changed or Hsm not disable
+				&& autorizadorModel.getStatusConnHSM() != ClientConnectionStatus.CLIENT_DISABLED) {// Check whether status has changed or Hsm not disable
 			autorizadorModel.setStatusConnHSM(status);
 			autorizadorView.updateHSMConnection();
 		}
@@ -52,9 +53,9 @@ public class AutorizadorController implements Controller {
 
 	// Update the Ecoscard connection status
 	@Override
-	public void setConnectStatusEcoscard(int status) {
+	public void setConnectStatusEcoscard(ClientConnectionStatus status) {
 		if (autorizadorModel.getStatusConnEcoscard() != status
-				&& autorizadorModel.getStatusConnEcoscard() != AutorizadorConstants.CLIENT_DISABLED) {// Check whether status has changed or Ecoscard not disable
+				&& autorizadorModel.getStatusConnEcoscard() != ClientConnectionStatus.CLIENT_DISABLED) {// Check whether status has changed or Ecoscard not disable
 			autorizadorModel.setStatusConnEcoscard(status);
 			autorizadorView.updateEcoscardConnection();
 		}
@@ -78,7 +79,7 @@ public class AutorizadorController implements Controller {
 
 	// Update the transaction status based on its thread id
 	@Override
-	public void updateTransactionStatus(long threadId, int status) {
+	public void updateTransactionStatus(long threadId, TransactionStatus status) {
 		int index;
 
 		index = autorizadorModel.updateTransactionStatus(threadId, status);

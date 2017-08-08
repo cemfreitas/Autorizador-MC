@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 import javax.swing.SwingUtilities;
 
-import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.ClientConnectionStatus;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 import cemfreitas.autorizadorMC.MVC.AutorizadorController;
 import cemfreitas.autorizadorMC.MVC.AutorizadorModel;
 import cemfreitas.autorizadorMC.MVC.Model;
@@ -29,8 +30,8 @@ public class TesteInterface {
 	public static void createAndShowGUI() throws Exception {
 		autorizadorModel = new AutorizadorModel();
 		autorizadorController = new AutorizadorController(autorizadorModel);
-		autorizadorController.setConnectStatusHSM(AutorizadorConstants.CLIENT_CONNECTED);
-		autorizadorController.setConnectStatusEcoscard(AutorizadorConstants.CLIENT_CONNECTED);
+		autorizadorController.setConnectStatusHSM(ClientConnectionStatus.CLIENT_CONNECTED);
+		autorizadorController.setConnectStatusEcoscard(ClientConnectionStatus.CLIENT_CONNECTED);
 		autorizadorController.setApplicationVersion("vs 2.0");		
 		
 		TransactionData transactionData;		
@@ -59,13 +60,13 @@ public class TesteInterface {
 			autorizadorController.inertTransaction(threadId + i, transactionData);			
 		}
 		
-		autorizadorController.updateTransactionStatus(510, 2);
-		autorizadorController.updateTransactionStatus(520, 3);
-		autorizadorController.updateTransactionStatus(535, 4);
+		autorizadorController.updateTransactionStatus(510, TransactionStatus.TRANSAC_REVERTED);
+		autorizadorController.updateTransactionStatus(520, TransactionStatus.TRANSAC_COMPLETED);
+		autorizadorController.updateTransactionStatus(535, TransactionStatus.TRANSAC_NOT_COMPLETED);
 		
-		autorizadorController.updateTransactionStatus(550, 2);
-		autorizadorController.updateTransactionStatus(570, 3);
-		autorizadorController.updateTransactionStatus(595, 4);
+		autorizadorController.updateTransactionStatus(550, TransactionStatus.TRANSAC_REVERTED);
+		autorizadorController.updateTransactionStatus(570, TransactionStatus.TRANSAC_COMPLETED);
+		autorizadorController.updateTransactionStatus(595, TransactionStatus.TRANSAC_NOT_COMPLETED);
 		
 		autorizadorController.updateStatistics(null);
 	}

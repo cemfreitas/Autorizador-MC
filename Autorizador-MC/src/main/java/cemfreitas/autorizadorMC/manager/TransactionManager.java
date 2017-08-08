@@ -10,7 +10,9 @@ import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
-import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.ClientConnectionStatus;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionPhase;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 import cemfreitas.autorizadorMC.utils.AppFunctions;
 import cemfreitas.autorizadorMC.utils.AutorizadorLog;
 import cemfreitas.autorizadorMC.utils.AutorizadorParams;
@@ -96,23 +98,23 @@ public class TransactionManager {
 			if (mediatorPushed instanceof Mediator) {
 				Mediator mediator = (Mediator) mediatorPushed;
 				long threadId = (long) threadPushed;
-				int currentPhase = mediator.getTransactionPhase();
+				TransactionPhase currentPhase = mediator.getTransactionPhase();
 				switch (currentPhase) {
-				case AutorizadorConstants.TRANSAC_MC_UNPACK_PHASE:
+				case TRANSAC_UNPACK:
 					// Add transaction data to main screen;
 					TransactionMonitor.addTransaction(threadId, mediator.getTransactionData());
 					break;
-				case AutorizadorConstants.TRANSAC_COMPLETED_PHASE:
+				case TRANSAC_COMPLETED:
 					// Update monitor with completed status transaction
-					TransactionMonitor.updateTransaction(threadId, AutorizadorConstants.TRANSAC_COMP_STATUS);
+					TransactionMonitor.updateTransaction(threadId, TransactionStatus.TRANSAC_COMPLETED);
 					//When transaction process ends, send a mediator reference to build the log informations. 
 					autorizadorLog = new AutorizadorLog(mediator);
 					autorizadorLog.build();
 					autorizadorLog.log();
 					break;
-				case AutorizadorConstants.TRANSAC_AUT_ERROR_PHASE:
+				case TRANSAC_AUT_ERROR:
 					// Update monitor with completed status transaction
-					TransactionMonitor.updateTransaction(threadId, AutorizadorConstants.TRANSAC_NOTCOMP_STATUS);
+					TransactionMonitor.updateTransaction(threadId, TransactionStatus.TRANSAC_NOT_COMPLETED);
 					//When transaction process ends, send a mediator reference to build the log informations.
 					autorizadorLog = new AutorizadorLog(mediator);
 					autorizadorLog.build();
@@ -120,16 +122,16 @@ public class TransactionManager {
 					break;
 				}
 				//For each notifications other than MC_UNPACK_PHASE, checks the ecoscard and HSM connections and update main screen.
-				if (currentPhase != AutorizadorConstants.TRANSAC_MC_UNPACK_PHASE) {
+				if (currentPhase != TransactionPhase.TRANSAC_UNPACK) {
 					if (mediator.isEcoDisconected()) {
-						TransactionMonitor.updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+						TransactionMonitor.updateEcoscardConnectionStatusView(ClientConnectionStatus.CLIENT_DISCONNECTED);
 					} else {
-						TransactionMonitor.updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+						TransactionMonitor.updateEcoscardConnectionStatusView(ClientConnectionStatus.CLIENT_CONNECTED);
 					}
 					if (mediator.isHsmDisconected()) {
-						TransactionMonitor.updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+						TransactionMonitor.updateHsmConnectionStatusView(ClientConnectionStatus.CLIENT_DISCONNECTED);
 					} else {
-						TransactionMonitor.updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+						TransactionMonitor.updateHsmConnectionStatusView(ClientConnectionStatus.CLIENT_CONNECTED);
 					}
 				}
 			}

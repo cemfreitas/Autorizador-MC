@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jpos.iso.ISOMsg;
 
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionPhase;
 import cemfreitas.autorizadorMC.MVC.TransactionData;
 
 /* Mediator interface.
@@ -27,7 +28,7 @@ public interface Mediator {
 	ISOMsg getIsoTransactionToMC();	
 	byte[] getTransactionFromHSM();	
 	byte[] getTransactionToHSM();	
-	int getTransactionPhase();	
+	TransactionPhase getTransactionPhase();	
 	TransactionData getTransactionData();
 	long getEcoExecutionTime();
 	long getHsmDbExecutionTime();

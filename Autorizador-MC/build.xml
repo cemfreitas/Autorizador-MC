@@ -9,7 +9,7 @@
     <target name="create_run_jar">
         <jar destfile="${dir.jarfile}/AutorizadorMC.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="cemfreitas.autorizador.AutorizadorMasterCard"/>
+                <attribute name="Main-Class" value="cemfreitas.autorizadorMC.AutorizadorMasterCard"/>
                 <attribute name="Class-Path" value=". ./config"/>
             </manifest>
             <fileset dir="${dir.jarfile}/classes"/>

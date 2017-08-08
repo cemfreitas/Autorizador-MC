@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 
 /* AutorizadorView class
  * It represents the view layer of the MVC model.
@@ -65,13 +65,13 @@ public class AutorizadorView {
 	void updateHSMConnection() {
 		
 		switch (model.getStatusConnHSM()) {
-		case AutorizadorConstants.CLIENT_CONNECTED:
+		case CLIENT_CONNECTED:
 			connectionView.setHSMConnectionOn();
 			break;
-		case AutorizadorConstants.CLIENT_DISCONNECTED:
+		case CLIENT_DISCONNECTED:
 			connectionView.setHSMConnectionOff();
 			break;
-		case AutorizadorConstants.CLIENT_DISABLED:
+		case CLIENT_DISABLED:
 			connectionView.setHSMDisabled();
 			break;
 		}
@@ -81,13 +81,13 @@ public class AutorizadorView {
 	void updateEcoscardConnection() {
 		
 		switch (model.getStatusConnEcoscard()) {
-		case AutorizadorConstants.CLIENT_CONNECTED:
+		case CLIENT_CONNECTED:
 			connectionView.setEcoscardConnectionOn();
 			break;
-		case AutorizadorConstants.CLIENT_DISCONNECTED:
+		case CLIENT_DISCONNECTED:
 			connectionView.setEcoscardConnectionOff();
 			break;
-		case AutorizadorConstants.CLIENT_DISABLED:
+		case CLIENT_DISABLED:
 			connectionView.setEcoscardDisabled();
 			break;
 		}		
@@ -101,7 +101,7 @@ public class AutorizadorView {
 	}
 
 	// Update a transaction status
-	void updateStausTransaction(int row, int status) {
+	void updateStausTransaction(int row, TransactionStatus status) {
 		transactionView.updateStatusTransaction(row, status);
 	}
 

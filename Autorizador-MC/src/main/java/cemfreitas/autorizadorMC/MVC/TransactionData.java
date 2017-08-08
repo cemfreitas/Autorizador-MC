@@ -3,17 +3,18 @@ package cemfreitas.autorizadorMC.MVC;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
+
 /* POJO Class used as value object.
  * It holds a transaction displayed on the JTable
  */
 public class TransactionData implements Serializable {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7251166872264246926L;
 
-	private int status;
+	private TransactionStatus status;
 	private String data;
 	private String codigo;
 	private String processo;
@@ -26,7 +27,7 @@ public class TransactionData implements Serializable {
 
 	}
 
-	public TransactionData(int status, String data, String codigo, String processo, BigDecimal valor, String NSU,
+	public TransactionData(TransactionStatus status, String data, String codigo, String processo, BigDecimal valor, String NSU,
 			String estabelecimento, String numCartao) {
 		this.status = status;
 		this.data = data;
@@ -38,11 +39,11 @@ public class TransactionData implements Serializable {
 		this.numCartao = numCartao;
 	}
 
-	public int getStatus() {
+	public TransactionStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(TransactionStatus status) {
 		this.status = status;
 	}
 
@@ -110,18 +111,18 @@ public class TransactionData implements Serializable {
 	public void setNumCartao(String numCartao) {
 		this.numCartao = numCartao;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((estabelecimento == null) ? 0 : estabelecimento.hashCode());
 		result = prime * result + ((NSU == null) ? 0 : NSU.hashCode());
-		result = prime * result + ((numCartao == null) ? 0 : numCartao.hashCode());
 		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((estabelecimento == null) ? 0 : estabelecimento.hashCode());
+		result = prime * result + ((numCartao == null) ? 0 : numCartao.hashCode());
 		result = prime * result + ((processo == null) ? 0 : processo.hashCode());
-		result = prime * result + status;
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
 		return result;
 	}
@@ -135,20 +136,10 @@ public class TransactionData implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		TransactionData other = (TransactionData) obj;
-		if (estabelecimento == null) {
-			if (other.estabelecimento != null)
-				return false;
-		} else if (!estabelecimento.equals(other.estabelecimento))
-			return false;
 		if (NSU == null) {
 			if (other.NSU != null)
 				return false;
 		} else if (!NSU.equals(other.NSU))
-			return false;
-		if (numCartao == null) {
-			if (other.numCartao != null)
-				return false;
-		} else if (!numCartao.equals(other.numCartao))
 			return false;
 		if (codigo == null) {
 			if (other.codigo != null)
@@ -159,6 +150,16 @@ public class TransactionData implements Serializable {
 			if (other.data != null)
 				return false;
 		} else if (!data.equals(other.data))
+			return false;
+		if (estabelecimento == null) {
+			if (other.estabelecimento != null)
+				return false;
+		} else if (!estabelecimento.equals(other.estabelecimento))
+			return false;
+		if (numCartao == null) {
+			if (other.numCartao != null)
+				return false;
+		} else if (!numCartao.equals(other.numCartao))
 			return false;
 		if (processo == null) {
 			if (other.processo != null)
@@ -174,5 +175,4 @@ public class TransactionData implements Serializable {
 			return false;
 		return true;
 	}
-
 }

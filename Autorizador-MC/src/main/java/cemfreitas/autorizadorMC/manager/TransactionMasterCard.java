@@ -11,6 +11,7 @@ import org.jpos.iso.packager.GenericPackager;
 import org.slf4j.Logger;
 
 import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 import cemfreitas.autorizadorMC.MVC.TransactionData;
 import cemfreitas.autorizadorMC.utils.AppFunctions;
 import cemfreitas.autorizadorMC.utils.Logging;
@@ -184,12 +185,12 @@ public class TransactionMasterCard extends TransactionBase {
 				transactionData.setNumCartao((String) isoTransaction.getValue(2));
 			}
 			if (transactionData.getCodigo().equals(AutorizadorConstants.TRANSAC_REVERSAL_TYPE)) {
-				transactionData.setStatus(AutorizadorConstants.TRANSAC_REV_STATUS);// Set
+				transactionData.setStatus(TransactionStatus.TRANSAC_REVERTED);// Set
 																					// status
 																					// to
 																					// reversal
 			} else {
-				transactionData.setStatus(AutorizadorConstants.TRANSAC_NEW_STATUS);// Set
+				transactionData.setStatus(TransactionStatus.TRANSAC_NEW);// Set
 																					// status
 																					// to
 																					// new

@@ -16,6 +16,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 
 /* This class compounds one of the four parts on the main screen.   
  * It shows the transaction panel on the main screen. 
@@ -70,9 +71,9 @@ public class TransactionView extends JPanel implements ActionListener {
 	}
 
 	// Update a transaction when its status changes
-	void updateStatusTransaction(int row, int status) {
+	void updateStatusTransaction(int row, TransactionStatus status) {
 		if (row < tableModel.getRowCount()) {
-			if (!tableModel.getValueAt(row, 0).equals(AutorizadorConstants.TRANSAC_REV_STATUS)) {// Reversal
+			if (!tableModel.getValueAt(row, 0).equals(TransactionStatus.TRANSAC_REVERTED)) {// Reversal
 																									// transactions
 																									// should
 																									// not

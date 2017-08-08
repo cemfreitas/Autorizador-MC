@@ -19,6 +19,7 @@ import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
 
 import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionPhase;
 import cemfreitas.autorizadorMC.MVC.TransactionData;
 import cemfreitas.autorizadorMC.utils.AutorizadorParams;
 import cemfreitas.autorizadorMC.utils.Logging;
@@ -63,7 +64,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	private List<String> databaseHsmReturn, databaseAutReturn;
 
 	//Used by TM to get the current transaction phase.
-	private int transactionPhase;
+	private TransactionPhase transactionPhase;
 
 	//Hold a transaction to be displayed on the screen.	
 	private TransactionData transactionData;
@@ -139,7 +140,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 			//Starts to process a MC transaction.
 			transactionMasterCard = transactionFactory.createMasterCardTransaction(this);
 			transactionMasterCard.unpack();
-			changeTransactionPhase(AutorizadorConstants.TRANSAC_MC_UNPACK_PHASE);//Notify TM with a new unpacked transaction.
+			changeTransactionPhase(TransactionPhase.TRANSAC_UNPACK);//Notify TM with a new unpacked transaction.
 			/*
 			 * Flag settled by TransactionMasterCard to know whether or not
 			 * should be sent to Ecoscard.
@@ -267,10 +268,10 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 			}
 
 			if (isAborted || isTimeOut) {// If occurred some error
-				changeTransactionPhase(AutorizadorConstants.TRANSAC_AUT_ERROR_PHASE);//Notify TM with transaction finished with error.
+				changeTransactionPhase(TransactionPhase.TRANSAC_AUT_ERROR);//Notify TM with transaction finished with error.
 			} else {
 				if (!transactionData.getCodigo().equals(AutorizadorConstants.TRANSAC_REVERSAL_TYPE)) {//Reversal message should not be counted.
-					changeTransactionPhase(AutorizadorConstants.TRANSAC_COMPLETED_PHASE);//Notify TM with transaction finished successfully.
+					changeTransactionPhase(TransactionPhase.TRANSAC_COMPLETED);//Notify TM with transaction finished successfully.
 				}
 			}
 
@@ -279,7 +280,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	}
 
 	//Changes phase and notify TM
-	private void changeTransactionPhase(int phase) {
+	private void changeTransactionPhase(TransactionPhase phase) {
 		transactionPhase = phase;
 		setChanged();
 		notifyObservers(Thread.currentThread().getId());
@@ -439,7 +440,7 @@ public class TransactionMediator extends Observable implements Mediator, Manager
 	}
 
 	@Override
-	public int getTransactionPhase() {
+	public TransactionPhase getTransactionPhase() {
 		return transactionPhase;
 	}
 

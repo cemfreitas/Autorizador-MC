@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cemfreitas.autorizadorMC.AutorizadorConstants;
+import cemfreitas.autorizadorMC.AutorizadorConstants.ClientConnectionStatus;
+import cemfreitas.autorizadorMC.AutorizadorConstants.TransactionStatus;
 import cemfreitas.autorizadorMC.Client;
 import cemfreitas.autorizadorMC.MVC.Controller;
 import cemfreitas.autorizadorMC.MVC.TransactionData;
@@ -74,11 +76,11 @@ public class TransactionMonitor {
 
 	}
 
-	synchronized public static void updateTransaction(long threadId, int status) {
-		if (status == AutorizadorConstants.TRANSAC_COMP_STATUS) {
+	synchronized public static void updateTransaction(long threadId, TransactionStatus status) {
+		if (status == TransactionStatus.TRANSAC_COMPLETED) {
 			incTransactionCompletedCounter();
 		}
-		if (status == AutorizadorConstants.TRANSAC_NOTCOMP_STATUS) {
+		if (status == TransactionStatus.TRANSAC_NOT_COMPLETED) {
 			incTransactionErrorCounter();
 		}
 
@@ -114,11 +116,11 @@ public class TransactionMonitor {
 
 	}
 
-	synchronized static public void updateHsmConnectionStatusView(int status) {
+	synchronized static public void updateHsmConnectionStatusView(ClientConnectionStatus status) {
 		viewController.setConnectStatusHSM(status);
 	}
 
-	synchronized static public void updateEcoscardConnectionStatusView(int status) {
+	synchronized static public void updateEcoscardConnectionStatusView(ClientConnectionStatus status) {
 		viewController.setConnectStatusEcoscard(status);
 	}
 
@@ -129,17 +131,17 @@ public class TransactionMonitor {
 
 		if (hsmIP.equals("") || hsmSP.equals("") || hsmPort == 0) {
 			isHsmEnabled = false;
-			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISABLED);
+			updateHsmConnectionStatusView(ClientConnectionStatus.CLIENT_DISABLED);
 			return;
 		}
 		isHsmEnabled = true;
 		Client hsm = new Client(hsmIP, hsmPort, "HSM");
 		try {
 			hsm.clientConnect();
-			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+			updateHsmConnectionStatusView(ClientConnectionStatus.CLIENT_CONNECTED);
 			hsm.closeConnection();			
 		} catch (IOException e) {
-			updateHsmConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+			updateHsmConnectionStatusView(ClientConnectionStatus.CLIENT_DISCONNECTED);
 		}
 	}
 
@@ -149,17 +151,17 @@ public class TransactionMonitor {
 		
 		if (ecoscardIP.equals("") || ecoscardPort == 0) {			
 			isEcoscardEnabled = false;
-			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISABLED);
+			updateEcoscardConnectionStatusView(ClientConnectionStatus.CLIENT_DISABLED);
 			return;
 		}
 		isEcoscardEnabled = true;
 		Client ecoscard = new Client(ecoscardIP, ecoscardPort, "Ecoscard");
 		try {
 			ecoscard.clientConnect();
-			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_CONNECTED);
+			updateEcoscardConnectionStatusView(ClientConnectionStatus.CLIENT_CONNECTED);
 			ecoscard.closeConnection();			
 		} catch (IOException e) {
-			updateEcoscardConnectionStatusView(AutorizadorConstants.CLIENT_DISCONNECTED);
+			updateEcoscardConnectionStatusView(ClientConnectionStatus.CLIENT_DISCONNECTED);
 		}
 	}
 
